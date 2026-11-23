@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased (0.1.0)
+## 0.1.0
 
 - Ported Python VibeGen's function generation, default system instruction, and configurable evaluation through VibeTools.
 - Added public callable types so consuming libraries can export configured instances in their TypeScript declarations.

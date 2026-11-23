@@ -47,7 +47,7 @@ console.log(`The antonym of ${word} is ${antonym}.`)
 
 Text is the default return type. For other results, pass a runtime `return_type` such as `Boolean`, `BigInt`, or a schema with a synchronous `parse` method. TypeScript erases type annotations during compilation, so VibeGen accepts the function's signature and docstring as options.
 
-Once the first npm release is available, install VibeGen and the SDK for your provider.
+Install VibeGen and the SDK for your provider.
 
 ```sh
 # Google Gemini

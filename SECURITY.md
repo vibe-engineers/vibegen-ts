@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-VibeGen for TypeScript is in development at version `0.1.0`. For a report about the unreleased port, include the source revision you tested.
+The current release series is `0.1.x`. For a report about a source build, include the Git revision you tested.
 
 ## Reporting a Vulnerability
 
@@ -13,6 +13,6 @@ Please include the following details in your report.
 - A description of the vulnerability and its effect.
 - The affected VibeGen version or source revision.
 - Steps needed to reproduce the issue.
-- Any relevant provider, Node.js version, or configuration details with credentials removed.
+- Any relevant provider, browser or Node.js version, and configuration details with credentials removed.
 
 The team aims to acknowledge a report within 48 hours, investigate the cause and severity, and coordinate a fix with the reporter. Please coordinate public disclosure with the team so users have time to apply the fix.

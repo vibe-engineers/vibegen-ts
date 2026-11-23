@@ -1,7 +1,10 @@
-import { VibeConfig, type VibeConfigOptions } from "@vibe-engineers/vibetools/_internal"
-import { isPlainObject } from "@vibe-engineers/vibetools/_internal/vibe_config"
+import {
+  VibeConfig,
+  type VibeConfigOptions,
+  isPlainObject,
+} from "@vibe-engineers/vibetools/_internal/vibe_config"
 
-const defaultInstruction =
+export const defaultGenerationInstruction =
   "You will be given: a function signature (name, parameters, and return type); " +
   "a docstring describing what the function is intended to do; " +
   "the concrete arguments passed to the function; and the declared return value type. " +
@@ -18,7 +21,7 @@ export class VibeGenConfig extends VibeConfig {
   constructor(options: VibeConfigOptions = {}) {
     if (!isPlainObject(options))
       throw new TypeError("VibeGenConfig options must be a plain object.")
-    const { system_instruction = defaultInstruction, ...settings } = options
+    const { system_instruction = defaultGenerationInstruction, ...settings } = options
     super({ ...settings, system_instruction })
     if (new.target === VibeGenConfig) Object.freeze(this)
   }

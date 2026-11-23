@@ -5,7 +5,7 @@ import { VibeGen } from "@vibe-engineers/vibegen"
 import OpenAI from "openai"
 
 for (const provider of ["OpenAI", "Gemini"]) {
-  test(`${provider} SDK serializes a generation request and parses the response with an application schema`, async (t) => {
+  test(`${provider} uses its hosted transport even with a WebLLM-shaped API and parses the schema`, async (t) => {
     const reply = '{"id":9007199254740993,"name":"Milo"}'
     let request
     const fetch = t.mock.method(globalThis, "fetch", async (input, init) => {
@@ -42,6 +42,10 @@ for (const provider of ["OpenAI", "Gemini"]) {
             apiKey: "offline",
             httpOptions: { baseUrl: "https://gemini.invalid", retryOptions: { attempts: 1 } },
           })
+    Object.assign(sdk, {
+      getGPUVendor: async () => "offline",
+      chat: { completions: { create: () => assert.fail("local transport selected") } },
+    })
     const gen = VibeGen(sdk, "selected-model", { system_instruction: "Return a record." })
     class Person {
       constructor(id, name) {

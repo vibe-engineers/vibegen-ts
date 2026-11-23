@@ -14,6 +14,7 @@
 ## Table of Contents
 
 - [Introduction](#introduction)
+- [Using WebLLM in a browser](#using-webllm-in-a-browser)
 - [Features](#features)
 - [Technologies](#technologies)
 - [Team](#team)
@@ -22,7 +23,7 @@
 
 ### Introduction
 
-**VibeGen** is a lightweight TypeScript package that lets you describe a function in natural language and ask an LLM for its return value. Wrap a function, describe what it should do, and call it with the usual arguments. VibeGen sends its signature, docstring, and arguments to OpenAI or Google Gemini. The function body is skipped.
+**VibeGen** is a lightweight TypeScript package that lets you describe a function in natural language and ask an LLM for its return value. Wrap a function, describe what it should do, and call it with the usual arguments. An OpenAI or Google Gemini client on Node, or a WebLLM engine in the browser, generates the result from the signature, docstring, and arguments. The function body is skipped.
 
 This example asks Gemini for the antonym of a word. Set `GEMINI_API_KEY` to run it.
 
@@ -59,11 +60,41 @@ npm install @vibe-engineers/vibegen "openai@^7.62.0"
 
 For setup from source, live examples, and class method decorators, see the [Developer Guide](docs/DeveloperGuide.md).
 
+### Using WebLLM in a browser
+
+VibeGen 0.1.1 accepts an initialized WebLLM engine. Install WebLLM alongside VibeGen in your browser application.
+
+```sh
+npm install "@vibe-engineers/vibegen@^0.1.1" "@mlc-ai/web-llm@^0.2.89"
+```
+
+On a WebGPU-capable device, WebLLM downloads the model on first use. Initialize it once on HTTPS or localhost and reuse the engine for subsequent calls. This example generates a value locally without an API key.
+
+```ts
+import { CreateMLCEngine } from "@mlc-ai/web-llm"
+import { VibeGen } from "@vibe-engineers/vibegen"
+
+const model = "Llama-3.2-1B-Instruct-q4f16_1-MLC"
+const engine = await CreateMLCEngine(model, undefined, { temperature: 0 })
+const vg = VibeGen(engine, model, { timeout: 30_000 })
+const double = vg(function double(_value: number) {}, {
+  signature: "double(value: number) -> number",
+  docstring: "Return the input multiplied by two.",
+  return_type: Number,
+})
+
+console.log(await double(7))
+```
+
+VibeGen uses the engine's sampling settings. The example sets `temperature: 0` for more consistent results. For structured output, WebLLM can constrain generation to a JSON object or array. Use a synchronous `parse` method when your function requires particular fields or values.
+
+For inference in a Web Worker, pass the engine returned by `CreateWebWorkerMLCEngine` to the same factory. The application owns the model download and the engine lifetime. [WebLLM worker setup](https://github.com/mlc-ai/web-llm#dedicated-web-worker) · [Developer Guide](docs/DeveloperGuide.md#browser-inference)
+
 ### Features
 
 - **Function mocking.** Call a function stub and await a generated result.
 - **Natural language implementation.** Describe the intended behavior with a docstring. Include a full signature to give the model parameter names and types.
-- **Multi-provider support.** Use the same wrapper with OpenAI or Google Gemini.
+- **Multi-provider support.** Use the same wrapper with OpenAI, Google Gemini, or an initialized WebLLM engine.
 - **Type enforcement.** Use built-in return types for simple values or supply a synchronous parser for structured output. [Return types](docs/DeveloperGuide.md#return-types)
 
 ### Technologies
@@ -73,7 +104,7 @@ For setup from source, live examples, and class method decorators, see the [Deve
 <p align="center">
   <img height="150" width="150" src="https://www.typescriptlang.org/branding/ts-logo-128.svg" alt="TypeScript logo" />
 </p>
-<p align="center">TypeScript on Node.js 22.13 or later</p>
+<p align="center">TypeScript on Node.js 22.13 or later and WebGPU-capable browsers</p>
 
 ##### Project Repository
 

@@ -1,1 +1,7 @@
-export { type GeneratorWrapper, VibeGen, type VibeGenerator } from "./vibegen.js"
+export {
+  type GenerationOptions,
+  type GeneratorWrapper,
+  VibeGen,
+  type VibeGenFactory,
+  type VibeGenerator,
+} from "./vibegen.js"

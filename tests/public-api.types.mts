@@ -1,14 +1,42 @@
 import type { GoogleGenAI } from "@google/genai"
-import { VibeGen } from "@vibe-engineers/vibegen"
+import { VibeGen, type VibeGenerator } from "@vibe-engineers/vibegen"
 import { VibeGenConfig } from "@vibe-engineers/vibegen/config/config"
 import type { GenerationOptions } from "@vibe-engineers/vibegen/vibegen"
 import { VibeConfig } from "@vibe-engineers/vibetools"
+import type { SharedClient, VibeLlmClient } from "@vibe-engineers/vibetools/_internal"
+import type { WebLlmEngine, WebLlmWrapper } from "@vibe-engineers/vibetools/llms/webllm_wrapper"
 import type OpenAI from "openai"
 
 declare const openai: OpenAI
 declare const gemini: GoogleGenAI
 declare function expectType<T>(value: T): void
+
+declare module "@vibe-engineers/vibegen/vibegen" {
+  interface VibeGenerator {
+    applicationLabel?: string
+  }
+  interface GeneratorWrapper<T> {
+    applicationDefault?: T
+  }
+}
+
 export const gen = VibeGen(openai, "model")
+export function hostedGenerator<C extends SharedClient>(client: C): VibeGenerator {
+  return VibeGen(client, "model")
+}
+expectType<string | undefined>(gen.applicationLabel)
+const hosted: VibeGenerator = gen
+expectType<VibeLlmClient>(hosted.llm)
+declare const overlap: OpenAI & WebLlmEngine
+expectType<VibeLlmClient>(VibeGen(overlap, "model").llm)
+declare const anyProvider: SharedClient | WebLlmEngine
+expectType<VibeLlmClient | WebLlmWrapper>(VibeGen(anyProvider, "model").llm)
+declare const previous: ReturnType<typeof VibeGen>
+expectType<VibeLlmClient>(previous.llm)
+declare const untyped: ReturnType<typeof JSON.parse>
+expectType<VibeLlmClient>(VibeGen(untyped, "model").llm)
+export const alternateFactory = VibeGen
+export const factories = { gen: VibeGen }
 gen.llm = VibeGen(gemini, "model", new VibeGenConfig()).llm
 VibeGen(openai, "model", { system_instruction: null, timeout: 100, vibe_mode: "eager" })
 VibeGen(openai, "model", null)
@@ -18,6 +46,7 @@ function find(id: number, suffix = "", ...labels: string[]): void {
   throw new Error([id, suffix, ...labels].join())
 }
 export const generateNumber = gen({ return_type: Number })
+expectType<number | undefined>(generateNumber.applicationDefault)
 export const text = gen(find)
 expectType<Promise<string>>(text(1))
 expectType<Promise<string>>(gen()(find)(1, undefined, "blue"))

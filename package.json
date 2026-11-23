@@ -1,0 +1,61 @@
+{
+  "name": "@vibe-engineers/vibegen",
+  "version": "0.1.0",
+  "description": "Fake it till you make it: LLM-powered function stubs with vibes.",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "homepage": "https://github.com/vibe-engineers/vibegen-ts#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/vibe-engineers/vibegen-ts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/vibe-engineers/vibegen-ts/issues"
+  },
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js",
+    "./vibegen": "./dist/vibegen.js",
+    "./config/config": "./dist/config/config.js",
+    "./utils/logger": "./dist/utils/logger.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "CODE_OF_CONDUCT.md",
+    "docs",
+    "assets",
+    "examples",
+    ".env.template"
+  ],
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && npm run test:types && node --test tests/*.test.mjs",
+    "test:types": "tsc -p tsconfig.tests.json && tsc -p tsconfig.tests.json --noEmit --strictNullChecks false --exactOptionalPropertyTypes false",
+    "lint": "biome lint --config-path=./biome.json .",
+    "format": "biome format --config-path=./biome.json --write .",
+    "prepack": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && npm run build",
+    "test:parity": "npm run build && node --test tests/parity/python-parity.test.mjs"
+  },
+  "dependencies": {
+    "@vibe-engineers/vibetools": "^0.1.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.0.0",
+    "@google/genai": "3.6.1",
+    "@types/node": "22.20.5",
+    "openai": "7.62.0",
+    "typescript": "5.9.3"
+  }
+}
